@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "djoser",
+    "django_filters",
     "core",
 ]
 
@@ -139,3 +140,12 @@ SIMPLE_JWT = {
 
 
 AUTH_USER_MODEL = "core.User"
+
+
+GOOGLE_OAUTH2_CLIENT_ID = (
+    "793352088675-o0fsptqoco7geadhgdul9irepa0ojcm7.apps.googleusercontent.com"
+)
+GOOGLE_OAUTH2_CLIENT_SECRET = "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"
+GOOGLE_OAUTH2_PROJECT_ID = "job-board-406814"
+
+BASE_BACKEND_URL = "http://127.0.0.1:8000"
