@@ -13,13 +13,15 @@ class JobSeekerSerializer(serializers.ModelSerializer):
         user_id = self.context["request"].user.id
         if JobSeeker.objects.filter(user_id=user_id).exists():
             raise serializers.ValidationError("You've already registered.")
+        if Company.objects.filter(user_id=user_id).exists():
+            raise serializers.ValidationError("You've registered as a Company")
         return super().validate(attrs)
 
     def create(self, validated_data):
         user = self.context["request"].user
         user_id = user.id
         User = self.Meta.model.user.field.related_model
-        user.role = User.JOB_SEEKER
+        user.user_role = User.JOB_SEEKER
         user.save()
         return JobSeeker.objects.create(user_id=user_id, **validated_data)
 
@@ -45,12 +47,14 @@ class CompanySerializer(serializers.ModelSerializer):
         user_id = user.id
         if Company.objects.filter(user_id=user_id).exists():
             raise serializers.ValidationError("You've already registered.")
+        if JobSeeker.objects.filter(user_id=user_id).exists():
+            raise serializers.ValidationError("You've registered as a Job Seeker")
         return super().validate(attrs)
 
     def create(self, validated_data):
         user = self.context["request"].user
         user_id = user.id
         User = self.Meta.model.user.field.related_model
-        user.role = User.COMPANY
+        user.user_role = User.COMPANY
         user.save()
         return Company.objects.create(user_id=user_id, **validated_data)
