@@ -29,6 +29,14 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    JOB_SEEKER = "JS"
+    COMPANY = "CO"
+
+    USER_ROLE_CHOICES = [(JOB_SEEKER, "Job Seeker"), (COMPANY, "Company")]
+
+    user_role = models.CharField(
+        max_length=2, choices=USER_ROLE_CHOICES, null=True, blank=True
+    )
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
