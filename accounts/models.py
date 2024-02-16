@@ -28,7 +28,7 @@ class Company(models.Model):
     slug = AutoSlugField(unique=True, populate_from="name")
     phone = models.CharField(max_length=100)
     description = models.TextField()
-    image = models.ImageField(upload_to="images/company")
+    image = models.ImageField(upload_to="images/company", null=True)
     location = models.CharField(max_length=255)
     website = models.URLField(null=True, blank=True)
     industry = models.CharField(max_length=255)
