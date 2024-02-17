@@ -9,6 +9,7 @@ class JobSeeker(models.Model):
         on_delete=models.CASCADE,
         editable=False,
         primary_key=True,
+        related_name="job_seeker",
     )
     slug = AutoSlugField(unique=True, populate_from="user")
     image = models.ImageField(upload_to="image/job_seeker", blank=True, null=True)
@@ -23,6 +24,7 @@ class Company(models.Model):
         on_delete=models.CASCADE,
         primary_key=True,
         editable=False,
+        related_name="company",
     )
     name = models.CharField(max_length=255)
     slug = AutoSlugField(unique=True, populate_from="name")
