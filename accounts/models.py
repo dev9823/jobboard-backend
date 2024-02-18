@@ -18,6 +18,41 @@ class JobSeeker(models.Model):
     resume = models.FileField(upload_to="resume/")
 
 
+class Education(models.Model):
+    job_seeker = models.ForeignKey(
+        JobSeeker, on_delete=models.CASCADE, related_name="education"
+    )
+    institution_name = models.CharField(max_length=255)
+    degree_name = models.CharField(max_length=255)
+    field_of_study = models.CharField(max_length=255)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    description = models.TextField()
+
+
+class Skill(models.Model):
+    job_seeker = models.ForeignKey(
+        JobSeeker, on_delete=models.CASCADE, related_name="skills"
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    experience_years = models.PositiveSmallIntegerField()
+
+
+class WorkExperience(models.Model):
+    job_seeker = models.ForeignKey(
+        JobSeeker, on_delete=models.CASCADE, related_name="work_experience"
+    )
+    company = models.CharField(max_length=255)
+    position = models.CharField(max_length=255)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    description = models.TextField()
+
+    def __str__(self) -> str:
+        return f"{self.position} at {self.company}"
+
+
 class Company(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,

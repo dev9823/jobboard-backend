@@ -2,8 +2,14 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Company, JobSeeker
-from .serializers import CompanySerializer, JobSeekerSerializer
+from .models import Company, Education, JobSeeker, Skill, WorkExperience
+from .serializers import (
+    CompanySerializer,
+    EducationSerializer,
+    JobSeekerSerializer,
+    SkillSerializer,
+    WorkExperienceSerializer,
+)
 from .permissions import DenyDuplicateProfile, IsCompany, IsJobSeeker
 
 
@@ -71,3 +77,39 @@ class CompanyViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {"request": self.request}
+
+
+class WorkExperienceViewSet(ModelViewSet):
+    serializer_class = WorkExperienceSerializer
+    permission_classes = [IsJobSeeker]
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+        return WorkExperience.objects.filter(job_seeker_id=user_id)
+
+    def get_serializer_context(self):
+        return {"user_id": self.request.user.id}
+
+
+class EducationViewSet(ModelViewSet):
+    serializer_class = EducationSerializer
+    permission_classes = [IsJobSeeker]
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+        return Education.objects.filter(job_seeker_id=user_id)
+
+    def get_serializer_context(self):
+        return {"user_id": self.request.user.id}
+
+
+class SkillViewSet(ModelViewSet):
+    serializer_class = SkillSerializer
+    permission_classes = [IsJobSeeker]
+
+    def get_queryset(self):
+        job_seeker_id = self.request.user.id
+        return Skill.objects.filter(job_seeker_id=job_seeker_id)
+
+    def get_serializer_context(self):
+        return {"user_id": self.request.user.id}

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Company, JobSeeker
+from .models import Company, Education, JobSeeker, Skill, WorkExperience
 
 
 class JobSeekerSerializer(serializers.ModelSerializer):
@@ -8,7 +8,6 @@ class JobSeekerSerializer(serializers.ModelSerializer):
         fields = ["user", "slug", "image", "location", "description", "resume"]
         read_only_fields = ["user", "slug"]
 
-    # Validate the user to ensure they haven't already created an account as either a company or a job seeker
     def validate(self, attrs):
         user_id = self.context["request"].user.id
         if JobSeeker.objects.filter(user_id=user_id).exists():
@@ -58,3 +57,64 @@ class CompanySerializer(serializers.ModelSerializer):
         user.user_role = User.COMPANY
         user.save()
         return Company.objects.create(user_id=user_id, **validated_data)
+
+
+class WorkExperienceSerializer(serializers.ModelSerializer):
+    job_seeker = serializers.CharField(source="job_seeker.user", read_only=True)
+
+    class Meta:
+        model = WorkExperience
+        fields = [
+            "id",
+            "job_seeker",
+            "company",
+            "position",
+            "start_date",
+            "end_date",
+            "description",
+        ]
+
+    def create(self, validated_data):
+        job_seeker_id = self.context["user_id"]
+        return WorkExperience.objects.create(
+            job_seeker_id=job_seeker_id, **validated_data
+        )
+
+
+class EducationSerializer(serializers.ModelSerializer):
+    job_seeker = serializers.CharField(source="job_seeker.user", read_only=True)
+
+    class Meta:
+        model = Education
+        fields = [
+            "id",
+            "job_seeker",
+            "institution_name",
+            "degree_name",
+            "field_of_study",
+            "start_date",
+            "end_date",
+            "description",
+        ]
+
+    def create(self, validated_data):
+        job_seeker_id = self.context["user_id"]
+        return Education.objects.create(job_seeker_id=job_seeker_id, **validated_data)
+
+
+class SkillSerializer(serializers.ModelSerializer):
+    job_seeker = serializers.CharField(source="job_seeker.user", read_only=True)
+
+    class Meta:
+        model = Skill
+        fields = [
+            "id",
+            "job_seeker",
+            "title",
+            "description",
+            "experience_years",
+        ]
+
+    def create(self, validated_data):
+        job_seeker_id = self.context["user_id"]
+        return Skill.objects.create(job_seeker_id=job_seeker_id, **validated_data)
