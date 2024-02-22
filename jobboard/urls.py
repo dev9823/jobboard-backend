@@ -9,6 +9,7 @@ urlpatterns = [
     path("auth/", include("djoser.urls.jwt")),
     path("auth/", include("core.urls"), name="google-oauth2"),
     path("accounts/", include("accounts.urls")),
+    path("jobs/", include("job.urls")),
 ]
 
 

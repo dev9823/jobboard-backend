@@ -69,3 +69,6 @@ class Company(models.Model):
     location = models.CharField(max_length=255)
     website = models.URLField(null=True, blank=True)
     industry = models.CharField(max_length=255)
+
+    def __str__(self) -> str:
+        return f"{self.name}"

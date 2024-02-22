@@ -2,29 +2,6 @@ from rest_framework import serializers
 from .models import Company, Education, JobSeeker, Skill, WorkExperience
 
 
-class JobSeekerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = JobSeeker
-        fields = ["user", "slug", "image", "location", "description", "resume"]
-        read_only_fields = ["user", "slug"]
-
-    def validate(self, attrs):
-        user_id = self.context["request"].user.id
-        if JobSeeker.objects.filter(user_id=user_id).exists():
-            raise serializers.ValidationError("You've already registered.")
-        if Company.objects.filter(user_id=user_id).exists():
-            raise serializers.ValidationError("You've registered as a Company")
-        return super().validate(attrs)
-
-    def create(self, validated_data):
-        user = self.context["request"].user
-        user_id = user.id
-        User = self.Meta.model.user.field.related_model
-        user.user_role = User.JOB_SEEKER
-        user.save()
-        return JobSeeker.objects.create(user_id=user_id, **validated_data)
-
-
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
@@ -118,3 +95,40 @@ class SkillSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         job_seeker_id = self.context["user_id"]
         return Skill.objects.create(job_seeker_id=job_seeker_id, **validated_data)
+
+
+class JobSeekerSerializer(serializers.ModelSerializer):
+    education = EducationSerializer(many=True, read_only=True)
+    skill = SkillSerializer(many=True, read_only=True)
+    work_experience = WorkExperienceSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = JobSeeker
+        fields = [
+            "user",
+            "education",
+            "skill",
+            "work_experience",
+            "slug",
+            "image",
+            "location",
+            "description",
+            "resume",
+        ]
+        read_only_fields = ["user", "slug"]
+
+    def validate(self, attrs):
+        user_id = self.context["request"].user.id
+        if JobSeeker.objects.filter(user_id=user_id).exists():
+            raise serializers.ValidationError("You've already registered.")
+        if Company.objects.filter(user_id=user_id).exists():
+            raise serializers.ValidationError("You've registered as a Company")
+        return super().validate(attrs)
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        user_id = user.id
+        User = self.Meta.model.user.field.related_model
+        user.user_role = User.JOB_SEEKER
+        user.save()
+        return JobSeeker.objects.create(user_id=user_id, **validated_data)

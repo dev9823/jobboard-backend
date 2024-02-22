@@ -1,3 +1,8 @@
 Pipfile
 Pipfile.lock
 db.sqlite3
+.env
+*.pyc
+__pycache__/
+/media/
+/static/
