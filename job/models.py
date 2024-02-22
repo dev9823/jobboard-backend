@@ -30,6 +30,9 @@ class Vacancy(models.Model):
     job_type = models.CharField(max_length=1, choices=JOB_TYPE_CHOICES)
     deadline = models.DateField()
 
+    def __str__(self) -> str:
+        return self.title
+
 
 class Applicant(models.Model):
     applicant = models.ForeignKey(
